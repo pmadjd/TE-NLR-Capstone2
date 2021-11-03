@@ -14,6 +14,11 @@ public class JdbcAccountDao implements AccountDao{
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public JdbcAccountDao() {
+
+    }
+
+
     @Override
     public Account viewBalance(int userId) {
         String sql = "SELECT balance " +

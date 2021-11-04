@@ -17,10 +17,6 @@ public class JdbcTransferDao implements TransferDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public JdbcTransferDao() {
-
-    }
-
     public Transfer transferSend(int userId) {
         /* String sql = "SELECT balance " +
                 "FROM accounts " +
@@ -45,7 +41,7 @@ public class JdbcTransferDao implements TransferDao {
         return null;
     }
 
-    public List<Transfer> transferDetails(int userId) {//store in sql file after every transaction linked with their TransferID then when they want the details have this print put all the SQL statements with their transferID
+    public List<Transfer> transferHistory(int userId) {//store in sql file after every transaction linked with their TransferID then when they want the details have this print put all the SQL statements with their transferID
         List<Transfer> transfers = new ArrayList<>();
         String sql = "SELECT * " +
                 "FROM transfers" +

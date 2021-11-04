@@ -6,18 +6,13 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-
+@Component
 public class JdbcAccountDao implements AccountDao{
 
     private JdbcTemplate jdbcTemplate;
     public JdbcAccountDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
-    public JdbcAccountDao() {
-
-    }
-
 
     @Override
     public Account viewBalance(int userId) {
@@ -31,6 +26,7 @@ public class JdbcAccountDao implements AccountDao{
         return null; //placeholder for now
     }
 
+    @Override
     public BigDecimal addToBalance(int userId, BigDecimal transferDeposit) {
         String sql = "SELECT balance " +
                 "FROM accounts "+
@@ -49,6 +45,7 @@ public class JdbcAccountDao implements AccountDao{
         return null;
     }
 
+    @Override
     public BigDecimal subToBalance(int userId,BigDecimal transferWithdraw) {
         String sql = "SELECT balance " +
                 "FROM accounts "+

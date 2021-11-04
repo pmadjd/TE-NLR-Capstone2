@@ -1,8 +1,7 @@
 package com.techelevator.tenmo.controller;
 
 
-import com.techelevator.tenmo.dao.JdbcAccountDao;
-import com.techelevator.tenmo.dao.JdbcTransferDao;
+import com.techelevator.tenmo.dao.*;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.LoginDTO;
 import com.techelevator.tenmo.model.Transfer;
@@ -17,21 +16,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 public class AccountController {
+    private UserDao userDao;
+    private AccountDao accountDao;
+    private TransferDao transferDao;
+
+    public AccountController(UserDao userDao, AccountDao accountDao) {
+        this.userDao = userDao;
+        this.accountDao = accountDao;
+    }
 
     @RequestMapping(value = "/balance", method = RequestMethod.GET)
-    public BigDecimal getBalance (int userId) {
-        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
-        return jdbcAccountDao.viewBalance(userId).getBalance();
+    public BigDecimal getBalance (Principal principal) {
+        int userId = userDao.findIdByUsername(principal.getName());
+        return accountDao.viewBalance(userId).getBalance();
     }
 
     @RequestMapping(value = "/transfer", method = RequestMethod.GET)
-    public List<Transfer> getTransfers (int userId) {
-        JdbcTransferDao jdbcTransferDao = new JdbcTransferDao();
-
-        return jdbcTransferDao.transferDetails(userId);
+    public List<Transfer> getTransfers (Principal principal) {
+        int userId  = userDao.findIdByUsername(principal.getName());
+        return transferDao.transferHistory(userId);
     }
+
 }

@@ -39,30 +39,14 @@ public class JdbcTransferDao implements TransferDao {
         }
     }
 
-    /*
-        public String transferSend(int userIdFrom, int userIdTo, BigDecimal amount) {
-        if(jdbcAccountDao.viewBalance(userIdFrom).getBalance().compareTo(amount) >= 0){
-            String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) "+
-                    "VALUES (?,?,?,?,?) ;";
-            //make 2 constants and name them public static final
-            jdbcTemplate.update(sql, 2, 2,userIdFrom, userIdTo, amount);
-            accountDao.addToBalance(userIdTo, amount);
-            accountDao.subToBalance(userIdFrom, amount);
-            return "Transfer complete";
-        }else{
-            return "ERROR Not Enough Money, Can Not Transfer More Than You Have";
-        }
-    }
-     */
-
-
     public List<Transfer> transferHistory(int userId) {//store in sql file after every transaction linked with their TransferID then when they want the details have this print put all the SQL statements with their transferID
         List<Transfer> transfers = new ArrayList<>();
         String sql = "SELECT * " +
-                "FROM transfers " +
-                "FULL OUTER JOIN account " +
-                "WHERE user_id = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql,userId);
+                "FROM transfers "+
+                "INNER JOIN accounts as accounts_from ON transfers.account_from = accounts_from.account_id "+
+                "INNER JOIN accounts as accounts_to ON transfers.account_to = accounts_to.account_id "+
+                "WHERE accounts_from.user_id = ? OR accounts_to.user_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql,userId, userId);
         while (results.next()){
             Transfer transfer = mapRowToTransfer(results);
             transfers.add(transfer);
@@ -83,6 +67,8 @@ public class JdbcTransferDao implements TransferDao {
         return transfer;
     }
 
+
+
     private Transfer mapRowToTransfer(SqlRowSet results) {
         Transfer transfer = new Transfer();
         transfer.setTransferId(results.getInt("transfer_id"));
@@ -94,31 +80,3 @@ public class JdbcTransferDao implements TransferDao {
         return transfer;
     }
 }
-
-
-/*
-         String sql = "SELECT balance " +
-                "FROM accounts " +
-                "WHERE user_id = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userFrom);
-        BigDecimal balance = jdbcAccountDao.viewBalance(userFrom).getBalance();
-        if (results.next()) {
-            if(balance.compareTo(amount) >= 0) {
-                balance.subtract(amount);
-                String sqlUpdate = "UPDATE accounts " +
-                        "SET balance = ? " +
-                        "WHERE user_id = ?;";
-                jdbcTemplate.update(sqlUpdate, balance, userFrom);
-                String sqlTo = "SELECT balance "+
-                        "FROM accounts "+
-                        "WHERE user_id = ?;";
-                SqlRowSet resultsTo = jdbcTemplate.queryForRowSet(sqlTo, userTo);
-                BigDecimal balanceTo = jdbcAccountDao.viewBalance(userTo).getBalance();
-                balanceTo.add(amount);
-                String sqlUpdateTo = "UPDATE accounts "+
-                        "SET balance = ? "+
-                        "WHERE user_id = ?;";
-                jdbcTemplate.update(sqlUpdateTo, balanceTo, userTo);
-
-
- */

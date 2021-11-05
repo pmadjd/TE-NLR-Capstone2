@@ -18,14 +18,14 @@ public class TransferService {
 
     public TransferService(String url){this.baseUrl = url;}
 
-    public List<String> getTransferHistory (String token){
+    public String getTransferHistory (String token){
         HttpHeaders header = new HttpHeaders();
         header.setBearerAuth(token);
         HttpEntity<?> entity = new HttpEntity<>(header);
-        List<String> details = new ArrayList();
+        String details = new String();
         try{
-            ResponseEntity<List> response = restTemplate.exchange(baseUrl+"/transfer", HttpMethod.GET, entity, List.class);
-            details = response.getBody();
+            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer", HttpMethod.GET, entity, String.class);
+            details = (String) response.getBody();
         } catch (Exception e) {
             System.out.println("ERROR occurred while getting Transfer History");
         }
@@ -47,17 +47,20 @@ public class TransferService {
     }
 
 
-    public String getSendBucks (String token) {
+    public String getSendBucks (String token, int userIdTo, int amount) {  //, int userIdTo, int amount
         HttpHeaders header = new HttpHeaders();
         header.setBearerAuth(token);
         HttpEntity<?> entity = new HttpEntity<>(header);
         String statement = new String();
         try{
-            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer/send", HttpMethod.POST, entity, String.class);
+            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer/send", HttpMethod.POST, entity, String.class, userIdTo, Integer.class, amount, Integer.class);
             statement = (String) response.getBody();
         } catch (Exception e) {
             System.out.println("ERROR occurred while Sending Bucks");
         }
+
+
+
         return statement;
     }
 }

@@ -29,7 +29,7 @@ public class JdbcAccountDao implements AccountDao{
     @Override
     public BigDecimal addToBalance(int userIdTo, BigDecimal amount) {
         String sql = "SELECT * " +
-                "FROM accounts "+  //
+                "FROM accounts "+
                 "WHERE user_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userIdTo);
         if (results.next()){
@@ -40,6 +40,9 @@ public class JdbcAccountDao implements AccountDao{
                     "WHERE user_id = ?;";
             jdbcTemplate.update(sqlUpdate, balance, userIdTo);
             return balance;
+        }
+        else {
+            System.out.println("Error Occurred While Adding to User");
         }
         return null;
     }
@@ -53,7 +56,7 @@ public class JdbcAccountDao implements AccountDao{
         if (results.next()){
             BigDecimal balance =  mapRowToAccount(results).getBalance();
             if (balance.compareTo(amount) >= 0) {
-                balance.subtract(amount);
+                balance = balance.subtract(amount);
                 String sqlUpdate = "UPDATE accounts " +
                         "SET balance = ? " +
                         "WHERE user_id = ?;";
@@ -62,7 +65,6 @@ public class JdbcAccountDao implements AccountDao{
             }
             else {
                 System.out.println("Balance Too Low To Transfer This Amount");
-                return balance;
             }
         }
         return null;

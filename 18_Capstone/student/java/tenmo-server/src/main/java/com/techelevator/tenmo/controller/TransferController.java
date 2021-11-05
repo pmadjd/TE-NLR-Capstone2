@@ -21,17 +21,18 @@ public class TransferController {
     private TransferDao transferDao;
     private AccountDao accountDao;
     private Transfer transfer;
-     //change to come from the body of the request
+    private JdbcUserDao jdbcUserDao;
 
-    public TransferController(UserDao userDao, TransferDao transferDao, AccountDao accountDao) {
+    public TransferController(UserDao userDao, TransferDao transferDao, AccountDao accountDao, JdbcUserDao jdbcUserDao) {
         this.userDao = userDao;
         this.transferDao = transferDao;
         this.accountDao = accountDao;
+        this.jdbcUserDao = jdbcUserDao;
     }
     @RequestMapping(value = "/transfer", method = RequestMethod.GET)
-    public List<Transfer> getTransferHistory (Principal principal) {
+    public String getTransferHistory (Principal principal) {
         int userId  = userDao.findIdByUsername(principal.getName());
-        return transferDao.transferHistory(userId);
+        return transferDao.transferHistory(userId).toString();
     }
 
     @RequestMapping(value = "/transfer/details", method = RequestMethod.GET)
@@ -42,18 +43,30 @@ public class TransferController {
 
     @RequestMapping(value = "/transfer/send", method = RequestMethod.POST) //match post/put
     public String getTransferSend (Principal principal, @RequestBody Transfer transfer){  //, @requestbody transfer transfer
-
+        //whereever transfer.getaccountFrom replace from with the id you get with the priciple
        int userIdFrom = userDao.findIdByUsername(principal.getName()); //account ids not user ids
-       int userIdTo = transfer.getAccountTo();
+       int userIdTo = userDao.getUserIdFromAccountTo(transfer.getAccountTo());
+       int accountIdTo = transfer.getAccountTo();
         BigDecimal amount = transfer.getAmount();
-        accountDao.addToBalance(userIdTo, amount);
-        accountDao.subToBalance(userIdFrom, amount);
-        return transferDao.transferSend(transfer.getAccountFrom(), transfer.getAccountTo(), amount, accountDao.viewBalance(userIdFrom).getBalance());
+        if(userIdFrom != userIdTo) {
+            accountDao.subToBalance(userIdFrom, amount);
+            accountDao.addToBalance(userIdTo, amount);
+            return transferDao.transferSend(transfer.getAccountFrom(), transfer.getAccountTo(), amount, accountDao.viewBalance(userIdFrom).getBalance());
+        }
+        else{
+            return "You Cannot Send Money To Yourself Baka";
+        }
     }
 
     @RequestMapping(value = "/transfer/users", method = RequestMethod.GET)
-    public List<User> getUsers (Principal principal){
-        return userDao.findAll();
+    public String getUsers (Principal principal){
+        String str = "";
+        List<User> userList = jdbcUserDao.findAll();
+        for(int i = 0; i < userList.size(); i++){
+            str += ("Username: "+ userList.get(i).getUsername() + "  --  User Id: "+ userList.get(i).getId() + "\n");  //add line spacing
+        }
+        return str;
     }
 
 }
+

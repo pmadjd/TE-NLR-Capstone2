@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface TransferDao {
-    String transferSend (int userFrom, int userTo, BigDecimal amount);
+    String transferSend (int userFrom, int userTo, BigDecimal amount, BigDecimal startingBalance);
 
     Transfer transferDetails (int userId);  //these methods should be returning strings not Accounts
 

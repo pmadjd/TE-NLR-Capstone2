@@ -32,13 +32,28 @@ public class TransferService {
         return details;
     }
 
+    public String getUserIds (String token){
+        HttpHeaders header = new HttpHeaders();
+        header.setBearerAuth(token);
+        HttpEntity<?> entity = new HttpEntity<>(header);
+        String statement = new String();
+        try{
+            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer/users", HttpMethod.GET, entity, String.class);
+            statement = (String) response.getBody();
+        } catch (Exception e) {
+            System.out.println("ERROR occurred while Getting Users");
+        }
+        return statement;
+    }
+
+
     public String getSendBucks (String token) {
         HttpHeaders header = new HttpHeaders();
         header.setBearerAuth(token);
         HttpEntity<?> entity = new HttpEntity<>(header);
         String statement = new String();
         try{
-            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer/send", HttpMethod.PUT, entity, String.class);
+            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer/send", HttpMethod.POST, entity, String.class);
             statement = (String) response.getBody();
         } catch (Exception e) {
             System.out.println("ERROR occurred while Sending Bucks");

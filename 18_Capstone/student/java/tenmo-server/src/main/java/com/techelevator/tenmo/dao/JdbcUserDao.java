@@ -56,22 +56,6 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public void allUserId(){
-        List<User> userIds = new ArrayList<>();
-        User userId;
-        String sql = "SELECT user_id "+
-                "FROM users;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-        while(results.next()){
-            userId = mapRowToUser(results);
-            userIds.add(userId);
-        }
-        for(User i : userIds){
-            System.out.println(i.getId());
-        }
-    }
-
-    @Override
     public boolean create(String username, String password) {
 
         // create user

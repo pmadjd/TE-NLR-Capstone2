@@ -29,12 +29,12 @@ public class JdbcAccountDao implements AccountDao{
     @Override
     public BigDecimal addToBalance(int userIdTo, BigDecimal amount) {
         String sql = "SELECT * " +
-                "FROM accounts "+
+                "FROM accounts "+  //
                 "WHERE user_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userIdTo);
         if (results.next()){
             BigDecimal balance =  mapRowToAccount(results).getBalance();
-            balance.add(amount);
+            balance = balance.add(amount);
             String sqlUpdate = "UPDATE accounts "+
                     "SET balance = ? " +
                     "WHERE user_id = ?;";

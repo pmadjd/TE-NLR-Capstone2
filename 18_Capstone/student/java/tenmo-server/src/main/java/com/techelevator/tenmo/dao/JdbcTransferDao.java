@@ -27,15 +27,13 @@ public class JdbcTransferDao implements TransferDao {
 
     public Account account = new Account();
 
-    public String transferSend(int userIdFrom, int userIdTo, BigDecimal amount) {
-        if(jdbcAccountDao.viewBalance(userIdFrom).getBalance().compareTo(amount) >= 0){
+    public String transferSend(int userIdFrom, int userIdTo, BigDecimal amount, BigDecimal startingBalance) {
+        if(startingBalance.compareTo(amount) >= 0){
             String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) "+
                     "VALUES (?,?,?,?,?) ;";
             //make 2 constants and name them public static final
             jdbcTemplate.update(sql, 2, 2,userIdFrom, userIdTo, amount);
-            accountDao.addToBalance(userIdTo, amount);
-            accountDao.subToBalance(userIdFrom, amount);
-            return "Transfer complete";
+            return "Transfer complete"; //
         }else{
             return "ERROR Not Enough Money, Can Not Transfer More Than You Have";
         }

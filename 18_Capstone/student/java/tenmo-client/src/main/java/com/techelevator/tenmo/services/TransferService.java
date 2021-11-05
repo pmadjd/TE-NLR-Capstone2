@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -47,13 +48,13 @@ public class TransferService {
     }
 
 
-    public String getSendBucks (String token, int userIdTo, int amount) {  //, int userIdTo, int amount
+    public String getSendBucks (String token, TransferDTO transferDTO) {  //, int userIdTo, int amount
         HttpHeaders header = new HttpHeaders();
         header.setBearerAuth(token);
-        HttpEntity<?> entity = new HttpEntity<>(header);
+        HttpEntity<TransferDTO> entity = new HttpEntity<>(transferDTO, header); // make ? transfer DTO and pass in userIdTO and amount
         String statement = new String();
         try{
-            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer/send", HttpMethod.POST, entity, String.class, userIdTo, Integer.class, amount, Integer.class);
+            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer/send", HttpMethod.POST, entity, String.class);
             statement = (String) response.getBody();
         } catch (Exception e) {
             System.out.println("ERROR occurred while Sending Bucks");

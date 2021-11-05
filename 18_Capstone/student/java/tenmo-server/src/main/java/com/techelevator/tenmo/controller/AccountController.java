@@ -23,7 +23,7 @@ import java.util.List;
 public class AccountController {
     private UserDao userDao;
     private AccountDao accountDao;
-    private TransferDao transferDao;
+
 
     public AccountController(UserDao userDao, AccountDao accountDao) {
         this.userDao = userDao;
@@ -34,12 +34,6 @@ public class AccountController {
     public BigDecimal getBalance (Principal principal) {
         int userId = userDao.findIdByUsername(principal.getName());
         return accountDao.viewBalance(userId).getBalance();
-    }
-
-    @RequestMapping(value = "/transfer", method = RequestMethod.GET)
-    public List<Transfer> getTransfers (Principal principal) {
-        int userId  = userDao.findIdByUsername(principal.getName());
-        return transferDao.transferHistory(userId);
     }
 
 }

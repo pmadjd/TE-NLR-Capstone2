@@ -7,8 +7,12 @@ import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
 import com.techelevator.tenmo.services.TransferService;
 import com.techelevator.view.ConsoleService;
+import io.cucumber.java.bs.A;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
+
+import java.util.Locale;
+import java.util.Scanner;
 
 public class App {
 
@@ -33,13 +37,21 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private TransferService transferService;
 
     public static void main(String[] args) {
-    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL));
+    	App app = new App(new ConsoleService(System.in, System.out),
+				new AuthenticationService(API_BASE_URL),
+				new AccountService(API_BASE_URL),
+				new TransferService(API_BASE_URL));
     	app.run();
     }
 
-    public App(ConsoleService console, AuthenticationService authenticationService) {
+    public App(ConsoleService console,
+			   AuthenticationService authenticationService,
+			   AccountService accountService,
+			   TransferService transferService) {
 		this.console = console;
 		this.authenticationService = authenticationService;
+		this.accountService = accountService;
+		this.transferService = transferService;
 	}
 
 	public void run() {
@@ -87,8 +99,9 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
-		
+		int userIdTo = console.getUserInputInteger("Please Enter the User Id you want to send money too");
+		int amount = console.getUserInputInteger("Please Enter the Amount to Transfer");
+		System.out.println(transferService.getSendBucks(currentUser.getToken()));
 	}
 
 	private void requestBucks() {

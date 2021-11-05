@@ -16,9 +16,9 @@ public class JdbcAccountDao implements AccountDao{
 
     @Override
     public Account viewBalance(int userId) {
-        String sql = "SELECT balance " +
+        String sql = "SELECT * " +
                 "FROM accounts "+
-                "WHERE user_id = ?;";
+                "WHERE user_id = ? ;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql,userId);
         if (results.next()){
             return mapRowToAccount(results);
@@ -27,44 +27,42 @@ public class JdbcAccountDao implements AccountDao{
     }
 
     @Override
-    public BigDecimal addToBalance(int userId, BigDecimal transferDeposit) {
-        String sql = "SELECT balance " +
+    public BigDecimal addToBalance(int userIdTo, BigDecimal amount) {
+        String sql = "SELECT * " +
                 "FROM accounts "+
                 "WHERE user_id = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userIdTo);
         if (results.next()){
             BigDecimal balance =  mapRowToAccount(results).getBalance();
-            balance.add(transferDeposit);
+            balance.add(amount);
             String sqlUpdate = "UPDATE accounts "+
                     "SET balance = ? " +
                     "WHERE user_id = ?;";
-            jdbcTemplate.update(sqlUpdate, balance, userId);
-            //add system print for the amount before and after, also need to log this for the user
+            jdbcTemplate.update(sqlUpdate, balance, userIdTo);
             return balance;
         }
         return null;
     }
 
     @Override
-    public BigDecimal subToBalance(int userId,BigDecimal transferWithdraw) {
-        String sql = "SELECT balance " +
+    public BigDecimal subToBalance(int userIdFrom,BigDecimal amount) {
+        String sql = "SELECT * " +
                 "FROM accounts "+
                 "WHERE user_id = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userIdFrom);
         if (results.next()){
             BigDecimal balance =  mapRowToAccount(results).getBalance();
-            if (balance.compareTo(transferWithdraw) > 0) {     //make sure that this is subtracting first and seeing if it is larger than 0 not really sure
-                balance.subtract(transferWithdraw);
+            if (balance.compareTo(amount) >= 0) {
+                balance.subtract(amount);
                 String sqlUpdate = "UPDATE accounts " +
                         "SET balance = ? " +
                         "WHERE user_id = ?;";
-                jdbcTemplate.update(sqlUpdate, balance, userId);
-                //add system print for the amount before and after, also need to log this for the user
+                jdbcTemplate.update(sqlUpdate, balance, userIdFrom);
                 return balance;
             }
             else {
                 System.out.println("Balance Too Low To Transfer This Amount");
-                return null;
+                return balance;
             }
         }
         return null;

@@ -1,13 +1,11 @@
 package com.techelevator.tenmo.model;
 
 import java.math.BigDecimal;
-import java.security.Principal;
 
 public class TransferDTO {
-    private int userIdFrom;
     private int userIdTo;
     private BigDecimal amount;
-
+    private int userIdFrom;
 
     public void setUserIdTo(int userIdTo) {
         this.userIdTo = userIdTo;
@@ -25,6 +23,7 @@ public class TransferDTO {
         return userIdTo;
     }
 
+
     public BigDecimal getAmount() {
         return amount;
     }
@@ -33,11 +32,10 @@ public class TransferDTO {
         this.amount = amount;
     }
 
-    public TransferDTO(int userIdFrom, int userIdTo, BigDecimal amount) {
-        this.userIdFrom = userIdFrom;
+    public TransferDTO(int userIdTo, BigDecimal amount, int userIdFrom) {
         this.userIdTo = userIdTo;
         this.amount = amount;
-
+        this.userIdFrom = userIdFrom;
     }
     //configure backend to receive this DTO
 }

@@ -12,8 +12,13 @@ import java.math.BigDecimal;
 public class AccountService {
     private String baseUrl;
     private RestTemplate restTemplate = new RestTemplate();
+    private Integer id;
 
     public AccountService(String url){this.baseUrl = url;}
+
+    public Integer getId() {
+            return id;
+        }
 
     public BigDecimal getBalance(String token){
         HttpHeaders header = new HttpHeaders();

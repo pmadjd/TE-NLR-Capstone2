@@ -25,7 +25,7 @@ public class TransferService {
         HttpEntity<?> entity = new HttpEntity<>(header);
         String details = new String();
         try{
-            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer", HttpMethod.GET, entity, String.class);
+            ResponseEntity response = restTemplate.exchange(baseUrl+"/transfer/details", HttpMethod.GET, entity, String.class);
             details = (String) response.getBody();
         } catch (Exception e) {
             System.out.println("ERROR occurred while getting Transfer History");
@@ -59,9 +59,6 @@ public class TransferService {
         } catch (Exception e) {
             System.out.println("ERROR occurred while Sending Bucks");
         }
-
-
-
         return statement;
     }
 }

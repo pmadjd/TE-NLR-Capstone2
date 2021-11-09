@@ -103,7 +103,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 
 	private void sendBucks() {
     	System.out.println(transferService.getUserIds(currentUser.getToken()));
-    	int userIdFrom = accountService.getId();
+    	int userIdFrom = currentUser.getUser().getId();
 		int userIdTo = console.getUserInputInteger("Please Enter the User Id you want to send money too");
 		int amountInt = console.getUserInputInteger("Please Enter the Amount to Transfer");
 		BigDecimal amount = BigDecimal.valueOf(amountInt);

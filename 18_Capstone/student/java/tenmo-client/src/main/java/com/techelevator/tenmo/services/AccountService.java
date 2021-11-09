@@ -16,10 +16,6 @@ public class AccountService {
 
     public AccountService(String url){this.baseUrl = url;}
 
-    public Integer getId() {
-            return id;
-        }
-
     public BigDecimal getBalance(String token){
         HttpHeaders header = new HttpHeaders();
         header.setBearerAuth(token);
